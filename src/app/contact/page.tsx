@@ -1,0 +1,104 @@
+import ContactForm from "@/components/contact/ContactForm";
+import { FaPhone, FaEnvelope, FaMapMarkerAlt } from "react-icons/fa"; // برای آیکون‌ها
+
+export default function ContactPage() {
+  return (
+    <div className="w-full min-h-screen bg-gray-100 py-24 px-6"> {/* پس‌زمینه روشن‌تر */}
+
+      <div className="max-w-7xl mx-auto"> {/* عرض بیشتر */}
+
+        <h1 className="text-5xl font-extrabold text-center text-gray-800 mb-20">
+          دریافت مشاوره و خدمات
+        </h1>
+
+        <div className="grid md:grid-cols-3 gap-16 items-start"> {/* ستون‌بندی بهتر با 3 ستون در دسکتاپ */}
+
+          {/* ستون اول: اطلاعات تماس و شبکه‌های اجتماعی */}
+          <div className="bg-white p-10 rounded-2xl shadow-xl space-y-10 sticky top-24"> {/* پس‌زمینه سفید، سایه بیشتر، چسبنده */}
+
+            <div>
+              <h2 className="text-3xl font-bold text-orange-500 mb-5">
+                همین امروز با ما تماس بگیرید!
+              </h2>
+              <p className="text-gray-600 leading-8">
+                تیم متخصص ما آماده پاسخگویی به سوالات شما در زمینه نیروگاه‌های خورشیدی،
+                مشاوره، و راه‌حل‌های نوآورانه است.
+              </p>
+            </div>
+
+            <div className="space-y-6 text-lg text-gray-700">
+
+              <div className="flex items-center gap-4">
+                <FaPhone className="text-orange-500 w-6 h-6" />
+                <div>
+                  <strong>تلفن:</strong>
+                  <p className="font-medium">0912-000-0000</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-4">
+                <FaEnvelope className="text-orange-500 w-6 h-6" />
+                <div>
+                  <strong>ایمیل:</strong>
+                  <p className="font-medium">info@solaruse.ir</p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-4">
+                <FaMapMarkerAlt className="text-orange-500 w-6 h-6 mt-1" />
+                <div>
+                  <strong>آدرس:</strong>
+                  <p className="font-medium leading-7">
+                    تهران، برج خورشید، طبقه ۱۰، واحد ۱۲۳، بلوار انرژی
+                  </p>
+                </div>
+              </div>
+
+            </div>
+
+            {/* شبکه‌های اجتماعی */}
+            <div className="pt-8">
+              <h3 className="font-bold text-xl mb-5 text-gray-800">
+                ما را دنبال کنید
+              </h3>
+              <div className="flex gap-8">
+                {/* مثال برای لینکدین، اینستاگرام، تلگرام */}
+                <a href="#" className="hover:text-orange-500 transition">
+                  <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M20.947 8.188v1.045h-1.934l-3.465 5.242h3.323c0.434 0.007 0.788 0.368 0.788 0.804v4.419c0 0.437-0.354 0.791-0.788 0.791h-11.37c-0.434 0-0.788-0.354-0.788-0.791v-4.419c0-0.437 0.354-0.791 0.788-0.791h3.222l-3.465-5.242H3.053C2.62 8.188 2.267 7.83 2.267 7.393v-4.419c0-0.437 0.354-0.791 0.788-0.791h11.37c0.434 0 0.788 0.354 0.788 0.791v4.419c0 0.437-0.354 0.791-0.788 0.791h-3.222l3.465 5.242h1.934V8.188c0-0.437 0.354-0.791 0.788-0.791h4.419c0.434 0 0.788 0.354 0.788 0.791v0z"/></svg>
+                </a>
+                <a href="#" className="hover:text-orange-500 transition">
+                  <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C7.48 2 4 5.48 4 10v4c0 3.31 2.69 6 6 6h2c3.31 0 6-2.69 6-6v-4c0-4.52-3.48-8-8-8zm0 12c-1.105 0-2-.895-2-2v-2c0-1.105.895-2 2-2s2 .895 2 2v2c0 1.105-.895 2-2 2zm4-6c0-3.31-2.69-6-6-6s-6 2.69-6 6v4c0 1.105.895 2 2 2h8c1.105 0 2-.895 2-2v-4zm-4 6c-1.105 0-2-.895-2-2s.895-2 2-2 2 .895 2 2v2z"/></svg>
+                </a>
+                <a href="#" className="hover:text-orange-500 transition">
+                  <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 7.423a6.957 6.957 0 0 0-4.447-4.447C14.708 2.791 13.402 2.698 12 2.698c-1.402-.002-2.708.092-3.997.277-1.3.186-2.457.492-3.447.853-.99.36-1.855.853-2.618 1.616a6.957 6.957 0 0 0-1.616 2.618c-.36.99-.667 2.147-.853 3.447-.186 1.29-.277 2.597-.277 3.997s.092 2.708.277 3.997c.186 1.3.492 2.457.853 3.447.36.99.853 1.855 1.616 2.618.762.762 1.616 1.255 2.618 1.616.99.36 2.147.667 3.447.853 1.29.186 2.597.277 3.997.277 1.402.002 2.708-.092 3.997-.277 1.3-.186 2.457-.492 3.447-.853.99-.36 1.855-.853 2.618-1.616.762-.762 1.255-1.616 1.616-2.618.36-.99.667-2.147.853-3.447.186-1.29.277-2.597.277-3.997-.002-1.402-.092-2.708-.277-3.997-.186-1.3-.492-2.457-.853-3.447-.36-.99-.853-1.855-1.616-2.618zM12 15.548c-1.905 0-3.451-1.546-3.451-3.451 0-1.905 1.546-3.451 3.451-3.451s3.451 1.546 3.451 3.451c0 1.905-1.546 3.451-3.451 3.451zm3.451-3.451c0-1.905-1.546-3.451-3.451-3.451-1.905 0-3.451 1.546-3.451 3.451 0 1.905 1.546 3.451 3.451 3.451s3.451-1.546 3.451-3.451zm2.503 5.421c-.383.935-.967 1.721-1.741 2.495-.774.774-1.56-1.358-2.495-1.741-.935-.383-1.721-.967-2.495-1.741-.774-.774-1.358-1.56-1.741-2.495-.383-.935-.473-1.866-.301-2.777.172-.91.677-1.732 1.378-2.433.701-.701 1.523-1.206 2.433-1.378.91-.172 1.841-.082 2.777.301.935.383 1.721.967 2.495 1.741.774.774 1.358 1.56 1.741 2.495.383.935.473 1.866.301 2.777z"/></svg>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          {/* ستون دوم: فرم تماس */}
+          <div className="md:col-span-2"> {/* فرم دو ستون را اشغال کند */}
+            <ContactForm />
+          </div>
+
+        </div>
+
+        {/* نقشه (اگر لازم بود، این بخش هم بزرگتر یا متفاوت طراحی شود) */}
+        <div className="mt-24"> {/* فاصله بیشتر */}
+          <h2 className="text-3xl font-bold text-center text-gray-800 mb-10">
+            موقعیت جغرافیایی ما
+          </h2>
+          <div className="w-full h-[450px] rounded-3xl overflow-hidden shadow-xl border-4 border-orange-500"> {/* کادر نقشه بهتر */}
+            <iframe
+              src="https://maps.google.com/maps?q=tehran&t=&z=13&ie=UTF8&iwloc=&output=embed"
+              className="w-full h-full"
+              loading="lazy" // بارگذاری تنبل برای بهبود عملکرد
+              referrerPolicy="no-referrer-when-downgrade" // برای امنیت بیشتر
+            ></iframe>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  );
+}
