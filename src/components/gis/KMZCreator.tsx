@@ -99,7 +99,7 @@ function FitBounds({ latlngs }: { latlngs: LatLngWithUTM[] }) {
 // 🔐 License codes with expiry dates
 const LICENSES: Record<string, string> = {
   "solar1404": "2027-12-31",
-  "demo": "2026-06-17",
+  "demo": "2026-06-19",
   "test2025": "2025-10-01"
 };
 
