@@ -1,5 +1,7 @@
 import * as Phaser from "phaser";
 
+type DraggableSprite = Phaser.GameObjects.Sprite;
+
 export default class MainScene extends Phaser.Scene {
   house: Phaser.GameObjects.Sprite | undefined;
   panel: Phaser.GameObjects.Sprite | undefined;
@@ -37,10 +39,18 @@ export default class MainScene extends Phaser.Scene {
     this.input.setDraggable(this.panel);
 
     // Dragging
-    this.input.on("drag", (pointer, obj, x, y) => {
-      obj.x = x;
-      obj.y = y;
-    });
+    this.input.on(
+      "drag",
+      (
+        _pointer: Phaser.Input.Pointer,
+        obj: DraggableSprite,
+        x: number,
+        y: number
+      ) => {
+        obj.x = x;
+        obj.y = y;
+      }
+    );
 
     // When panel is placed
     this.input.on("dragend", () => {

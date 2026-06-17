@@ -31,7 +31,8 @@ export default class scenefirstroom extends Phaser.Scene {
 
     this.girl = this.physics.add.sprite(100, 430, "girl").setScale(0.5);
 
-    this.cursors = this.input.keyboard.createCursorKeys();
+    // ✅ اصلاح TypeScript
+    this.cursors = this.input.keyboard!.createCursorKeys();
 
     this.textBox = this.add.text(40, 40, "", {
       fontSize: "24px",
@@ -49,12 +50,14 @@ export default class scenefirstroom extends Phaser.Scene {
     this.physics.add.overlap(this.girl, this.door, () => {
       this.textBox.setText("آفرین! مرحله بعد باز می‌شود.");
       this.time.delayedCall(800, () => {
-        this.scene.start("scenestart"); // موقت
+        this.scene.start("scenestart");
       });
     });
   }
 
   update() {
+    if (!this.girl || !this.cursors) return;
+
     this.girl.setVelocityX(0);
 
     if (this.cursors.left.isDown) {
