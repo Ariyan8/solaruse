@@ -96,8 +96,22 @@ function FitBounds({ latlngs }: { latlngs: LatLngWithUTM[] }) {
   return null;
 }
 
+// 🔐 License codes with expiry dates
+const LICENSES: Record<string, string> = {
+  "solar1404": "2027-12-31",
+  "demo123": "2026-01-01",
+  "test2025": "2025-10-01"
+};
+
+
 export default function KMZCreator() {
   const [mounted, setMounted] = useState(false);
+  // 🔐 License states
+  const [isLicensed, setIsLicensed] = useState(false);
+  const [licenseInput, setLicenseInput] = useState("");
+  const [licenseError, setLicenseError] = useState("");
+  const [licenseExpiry, setLicenseExpiry] = useState<string | null>(null);
+
   const [zone, setZone] = useState("39");
 
   const [rows, setRows] = useState<RowType[]>([
@@ -121,7 +135,37 @@ export default function KMZCreator() {
 
   useEffect(() => {
     setMounted(true);
+      const saved = localStorage.getItem("kmz_license");
+      const expiry = localStorage.getItem("kmz_expiry");
+
+  if (saved && expiry) {
+    if (new Date() < new Date(expiry)) {
+      setIsLicensed(true);
+      setLicenseExpiry(expiry);
+    }
+  }
   }, []);
+function checkLicense() {
+
+  const expiry = LICENSES[licenseInput.trim()];
+
+  if (!expiry) {
+    setLicenseError("رمز نامعتبر است");
+    return;
+  }
+
+  if (new Date() > new Date(expiry)) {
+    setLicenseError("مدت اعتبار رمز تمام شده");
+    return;
+  }
+
+  setIsLicensed(true);
+  setLicenseExpiry(expiry);
+
+  localStorage.setItem("kmz_license", licenseInput);
+  localStorage.setItem("kmz_expiry", expiry);
+
+}
 
   // اتوماتیک سازی بروزرسانی
   const processPoints = useMemo(() => () => {
@@ -513,277 +557,337 @@ EOF`;
         className="flex flex-row w-full h-screen bg-slate-100 text-[17px] sidebar-font"
         dir="rtl"
       >
-        <div className="w-[450px] bg-white h-full shadow-xl z-[1001] flex flex-col border-l">
-          <div className="p-8 bg-slate-900 text-white">
-            <h1 className="text-3xl font-bold text-yellow-500">
-              سامانه ترسیم و تحلیل مختصات
-            </h1>
-            <p className="text-sm opacity-90 mt-3">
-              خروجی‌های مهندسی با دقت بالا (UTM/GIS)
-            </p>
-          </div>
+<div className="w-[450px] bg-white h-full shadow-xl z-[1001] flex flex-col border-l">
 
-          <div className="p-8 flex-1 overflow-y-auto space-y-8">
-            <div>
-              <label className="text-lg font-bold block mb-3 text-slate-700">
-                زون منطقه (UTM Zone):
-              </label>
-              <input
-                type="number"
-                value={zone}
-                onChange={(e) => setZone(e.target.value)}
-                className="w-full border rounded-xl p-4 text-lg focus:ring-2 focus:ring-yellow-500 outline-none bg-slate-50"
-              />
-            </div>
+{!isLicensed ? (
 
-            <div>
-              <div className="flex justify-between items-center mb-4">
-                <button
-                  onClick={() => setRows([...rows, { x: "", y: "" }])}
-                  className="text-sm font-bold text-blue-700 border border-blue-200 px-4 py-2 rounded-lg hover:bg-blue-50"
-                >
-                  افزودن سطر
-                </button>
-              </div>
+<div className="p-8 flex flex-col justify-center h-full">
 
-              <div className="flex gap-3 mb-2 text-slate-700 font-bold text-base">
-                <div className="w-1/2 text-center">طول جغرافیایی</div>
-                <div className="w-1/2 text-center">عرض جغرافیایی</div>
-              </div>
+<h2 className="text-xl font-bold mb-4 text-center">
+فعال سازی سامانه
+</h2>
 
-              <div className="space-y-3">
-                {rows.map((row, i) => (
-                  <div key={i} className="flex gap-3">
-                    <input
-                      placeholder="X (East)"
-                      value={row.x}
-                      onChange={(e) => updateRow(i, "x", e.target.value)}
-                      className="w-1/2 border rounded-xl p-4 text-lg font-mono bg-slate-50"
-                    />
+<input
+type="password"
+value={licenseInput}
+onChange={(e)=>setLicenseInput(e.target.value)}
+placeholder="کد لایسنس"
+className="border p-3 rounded-lg mb-3 text-center"
+/>
 
-                    <input
-                      placeholder="Y (North)"
-                      value={row.y}
-                      onChange={(e) => updateRow(i, "y", e.target.value)}
-                      className="w-1/2 border rounded-xl p-4 text-lg font-mono bg-slate-50"
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
+{licenseError && (
+<div className="text-red-600 text-sm text-center mb-3">
+{licenseError}
+</div>
+)}
 
-            <div className="bg-slate-50 p-5 rounded-xl border border-slate-200">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <span className="text-sm text-slate-500 block mb-1">
-                    مساحت زمین (هکتار)
-                  </span>
-                  <span className="font-bold text-xl text-slate-900">
-                    {(area / 10000).toFixed(2)}
-                  </span>
-                </div>
+<button
+onClick={checkLicense}
+className="bg-slate-900 text-white py-3 rounded-lg"
+>
+فعال سازی
+</button>
 
-                <div>
-                  <span className="text-sm text-slate-500 block mb-1">
-                    ظرفیت نیروگاه (مگاوات)
-                  </span>
-                  <span className="font-bold text-xl text-slate-900">
-                    {((area / 10000) / 1.5).toFixed(2)}
-                  </span>
-                </div>
-              </div>
-            </div>
+</div>
 
-            <div className="grid grid-cols-2 gap-3 pt-6 border-t border-slate-100">
-              <button
-                onClick={exportExcel}
-                className="border border-slate-300 py-4 rounded-xl text-base font-bold hover:bg-slate-50 transition-colors"
-              >
-                مختصات اکسل
-              </button>
+) : (
 
-              <button
-                onClick={exportKMZ}
-                disabled={latlngs.length < 3}
-                className="bg-slate-800 text-white py-4 rounded-xl text-base font-bold disabled:opacity-30 transition-all"
-              >
-                فایل نقشه جغرافیایی KMZ
-              </button>
+<>
 
-              <button
-                onClick={exportDXF}
-                disabled={validRows.length < 2}
-                className="bg-blue-700 text-white py-4 rounded-xl text-base font-bold disabled:opacity-30 transition-all"
-              >
-                نقشه زمین اتوکد
-              </button>
+<div className="p-8 bg-slate-900 text-white">
+<h1 className="text-3xl font-bold text-yellow-500">
+سامانه ترسیم و تحلیل مختصات
+</h1>
+<p className="text-sm opacity-90 mt-3">
+خروجی‌های مهندسی با دقت بالا (UTM/GIS)
+</p>
+</div>
 
-              <button
-                onClick={exportPDF}
-                disabled={latlngs.length < 1 || isExportingPdf}
-                className="bg-red-600 text-white py-4 rounded-xl text-base font-bold disabled:opacity-30 transition-all"
-              >
-                {isExportingPdf
-                  ? "در حال پردازش..."
-                  : "عکس نقشه جغرافیایی سایت"}
-              </button>
-            </div>
+<div className="text-green-700 text-sm p-3 text-center bg-green-50 border-b">
+لایسنس فعال تا تاریخ: {licenseExpiry}
+</div>
 
-            <div className="text-sm leading-7 text-slate-600 bg-yellow-50 border border-yellow-200 rounded-xl p-4">
-              این سایت برای آماده سازی اسناد مربوط به نیروگاه خورشیدی از جمله
-              فایل KMZ مختصات و نقشه هوایی آماده شده است
-            </div>
+<div className="p-8 flex-1 overflow-y-auto space-y-8">
 
-            <div className="grid grid-cols-2 gap-3">
-              <button
-                onClick={() =>
-                  setRows((prev) =>
-                    prev.length > 0
-                      ? prev.map(() => ({ x: "", y: "" }))
-                      : [
-                          { x: "", y: "" },
-                          { x: "", y: "" },
-                          { x: "", y: "" },
-                          { x: "", y: "" },
-                          { x: "", y: "" },
-                        ]
-                  )
-                }
-                className="border border-red-300 text-red-700 py-4 rounded-xl text-base font-bold hover:bg-red-50 transition-colors"
-              >
-                پاک کردن تمام نقاط
-              </button>
+<div>
+<label className="text-lg font-bold block mb-3 text-slate-700">
+زون منطقه (UTM Zone):
+</label>
+<input
+type="number"
+value={zone}
+onChange={(e) => setZone(e.target.value)}
+className="w-full border rounded-xl p-4 text-lg focus:ring-2 focus:ring-yellow-500 outline-none bg-slate-50"
+/>
+</div>
 
-              <button
-                onClick={() =>
-                  setRows([
-                    { x: "530357", y: "3950691" },
-                    { x: "530368", y: "3950745" },
-                    { x: "530408", y: "3950768" },
-                    { x: "530462", y: "3950742" },
-                    { x: "530436", y: "3950692" },
-                    { x: "530465", y: "3950642" },
-                    { x: "530414", y: "3950616" },
-                    { x: "530372", y: "3950638" },
-                          ])
-                }
-                className="border border-green-300 text-green-700 py-4 rounded-xl text-base font-bold hover:bg-green-50 transition-colors"
-              >
-                نمایش نقاط پیش فرض
-              </button>
-            </div>
-          </div>
-        </div>
+<div>
 
-        <div ref={mapWrapperRef} className="flex-1 relative bg-slate-200">
-          <MapContainer
-            center={mapCenter}
-            zoom={latlngs.length > 0 ? 18 : 15}
-            preferCanvas={true}
-            style={{ width: "100%", height: "100%" }}
+<div className="flex justify-between items-center mb-4">
+<button
+onClick={() => setRows([...rows, { x: "", y: "" }])}
+className="text-sm font-bold text-blue-700 border border-blue-200 px-4 py-2 rounded-lg hover:bg-blue-50"
+>
+افزودن سطر
+</button>
+</div>
+
+<div className="flex gap-3 mb-2 text-slate-700 font-bold text-base">
+<div className="w-1/2 text-center">طول جغرافیایی</div>
+<div className="w-1/2 text-center">عرض جغرافیایی</div>
+</div>
+
+<div className="space-y-3">
+{rows.map((row, i) => (
+<div key={i} className="flex gap-3">
+
+<input
+placeholder="X (East)"
+value={row.x}
+onChange={(e) => updateRow(i, "x", e.target.value)}
+className="w-1/2 border rounded-xl p-4 text-lg font-mono bg-slate-50"
+/>
+
+<input
+placeholder="Y (North)"
+value={row.y}
+onChange={(e) => updateRow(i, "y", e.target.value)}
+className="w-1/2 border rounded-xl p-4 text-lg font-mono bg-slate-50"
+/>
+
+</div>
+))}
+</div>
+
+</div>
+
+<div className="bg-slate-50 p-5 rounded-xl border border-slate-200">
+
+<div className="grid grid-cols-2 gap-4">
+
+<div>
+<span className="text-sm text-slate-500 block mb-1">
+مساحت زمین (هکتار)
+</span>
+
+<span className="font-bold text-xl text-slate-900">
+{(area / 10000).toFixed(2)}
+</span>
+</div>
+
+<div>
+<span className="text-sm text-slate-500 block mb-1">
+ظرفیت نیروگاه (مگاوات)
+</span>
+
+<span className="font-bold text-xl text-slate-900">
+{((area / 10000) / 1.5).toFixed(2)}
+</span>
+</div>
+
+</div>
+</div>
+
+<div className="grid grid-cols-2 gap-3 pt-6 border-t border-slate-100">
+
+<button
+onClick={exportExcel}
+className="border border-slate-300 py-4 rounded-xl text-base font-bold hover:bg-slate-50 transition-colors"
+>
+مختصات اکسل
+</button>
+
+<button
+onClick={exportKMZ}
+disabled={latlngs.length < 3}
+className="bg-slate-800 text-white py-4 rounded-xl text-base font-bold disabled:opacity-30 transition-all"
+>
+فایل نقشه جغرافیایی KMZ
+</button>
+
+<button
+onClick={exportDXF}
+disabled={validRows.length < 2}
+className="bg-blue-700 text-white py-4 rounded-xl text-base font-bold disabled:opacity-30 transition-all"
+>
+نقشه زمین اتوکد
+</button>
+
+<button
+onClick={exportPDF}
+disabled={latlngs.length < 1 || isExportingPdf}
+className="bg-red-600 text-white py-4 rounded-xl text-base font-bold disabled:opacity-30 transition-all"
+>
+{isExportingPdf
+? "در حال پردازش..."
+: "عکس نقشه جغرافیایی سایت"}
+</button>
+
+</div>
+
+<div className="text-sm leading-7 text-slate-600 bg-yellow-50 border border-yellow-200 rounded-xl p-4">
+این سایت برای آماده سازی اسناد مربوط به نیروگاه خورشیدی از جمله
+فایل KMZ مختصات و نقشه هوایی آماده شده است
+</div>
+
+<div className="grid grid-cols-2 gap-3">
+
+<button
+onClick={() =>
+setRows((prev) =>
+prev.length > 0
+? prev.map(() => ({ x: "", y: "" }))
+: [
+{ x: "", y: "" },
+{ x: "", y: "" },
+{ x: "", y: "" },
+{ x: "", y: "" },
+{ x: "", y: "" },
+]
+)
+}
+className="border border-red-300 text-red-700 py-4 rounded-xl text-base font-bold hover:bg-red-50 transition-colors"
+>
+پاک کردن تمام نقاط
+</button>
+
+<button
+onClick={() =>
+setRows([
+{ x: "530357", y: "3950691" },
+{ x: "530368", y: "3950745" },
+{ x: "530408", y: "3950768" },
+{ x: "530462", y: "3950742" },
+{ x: "530436", y: "3950692" },
+{ x: "530465", y: "3950642" },
+{ x: "530414", y: "3950616" },
+{ x: "530372", y: "3950638" },
+])
+}
+className="border border-green-300 text-green-700 py-4 rounded-xl text-base font-bold hover:bg-green-50 transition-colors"
+>
+نمایش نقاط پیش فرض
+</button>
+
+</div>
+
+</div>
+
+</>
+
+)}
+
+</div>
+<div ref={mapWrapperRef} className="flex-1 relative bg-slate-200">
+  <MapContainer
+    center={mapCenter}
+    zoom={latlngs.length > 0 ? 18 : 15}
+    preferCanvas={true}
+    style={{ width: "100%", height: "100%" }}
+  >
+    <TileLayer
+      attribution='Tiles &copy; Esri — Source: Esri, Maxar, Earthstar Geographics, and the GIS User Community'
+      url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+    />
+
+    <FitBounds latlngs={latlngs} />
+
+    {latlngs.length >= 3 && (
+      <Polygon
+        positions={latlngs.map((p) => [p.lat, p.lng])}
+        pathOptions={
+          {
+            color: "#FFFFFF",
+            opacity: 0.95,
+            weight: 4,
+            fillColor: "#FFD700",
+            fillOpacity: 0.3,
+            renderer: mapRenderer,
+          } as L.PathOptions
+        }
+      />
+    )}
+
+    {latlngs.map((p, idx) => (
+      <Marker
+        key={`pt-${idx}`}
+        position={[p.lat, p.lng]}
+        icon={customDivIcon}
+        eventHandlers={{
+          click: () => setSelectedPointIndex(idx),
+        }}
+      >
+        <Tooltip
+          direction="right"
+          permanent
+          offset={[8, -8]}
+          opacity={1}
+          interactive={false}
+          className="custom-utm-tooltip"
+        >
+          <div
+            style={{
+              color: "#ffffff",
+              fontFamily: "monospace",
+              fontSize: "18px",
+              fontWeight: "bold",
+              lineHeight: 1.3,
+              textShadow:
+                "1px 1px 2px #000, -1px -1px 2px #000, 1px -1px 2px #000, -1px 1px 2px #000",
+              whiteSpace: "nowrap",
+              background: "transparent",
+              margin: 0,
+              padding: 0,
+            }}
           >
-            <TileLayer
-              attribution='Tiles &copy; Esri — Source: Esri, Maxar, Earthstar Geographics, and the GIS User Community'
-              url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-            />
+            {p.utmX}
+            <br />
+            {p.utmY}
+          </div>
+        </Tooltip>
 
-            <FitBounds latlngs={latlngs} />
+        {selectedPointIndex === idx && (
+          <Popup
+            position={[p.lat, p.lng]}
+            eventHandlers={{
+              remove: () => setSelectedPointIndex(null),
+            }}
+          >
+            <div
+              className="text-right sidebar-font"
+              style={{
+                minWidth: 200,
+                direction: "rtl",
+                fontSize: "16px",
+              }}
+            >
+              <div className="font-bold border-b pb-2 mb-2 text-blue-700">
+                نقطه {idx + 1}
+              </div>
 
-            {latlngs.length >= 3 && (
-              <Polygon
-                positions={latlngs.map((p) => [p.lat, p.lng])}
-                pathOptions={
-                  {
-                    color: "#FFFFFF",
-                    opacity: 0.95,
-                    weight: 4,
-                    fillColor: "#FFD700",
-                    fillOpacity: 0.3,
-                    renderer: mapRenderer,
-                  } as L.PathOptions
-                }
-              />
-            )}
+              <div className="text-base space-y-1">
+                <div>
+                  <b>X:</b> {p.utmX}
+                </div>
 
-            {latlngs.map((p, idx) => (
-              <Marker
-                key={`pt-${idx}`}
-                position={[p.lat, p.lng]}
-                icon={customDivIcon}
-                eventHandlers={{
-                  click: () => setSelectedPointIndex(idx),
-                }}
-              >
-                <Tooltip
-                  direction="right"
-                  permanent
-                  offset={[8, -8]}
-                  opacity={1}
-                  interactive={false}
-                  className="custom-utm-tooltip"
-                >
-                  <div
-                    style={{
-                      color: "#ffffff",
-                      fontFamily: "monospace",
-                      fontSize: "18px",
-                      fontWeight: "bold",
-                      lineHeight: 1.3,
-                      textShadow:
-                        "1px 1px 2px #000, -1px -1px 2px #000, 1px -1px 2px #000, -1px 1px 2px #000",
-                      whiteSpace: "nowrap",
-                      background: "transparent",
-                      margin: 0,
-                      padding: 0,
-                    }}
-                  >
-                    {p.utmX}
-                    <br />
-                    {p.utmY}
-                  </div>
-                </Tooltip>
+                <div>
+                  <b>Y:</b> {p.utmY}
+                </div>
 
-                {selectedPointIndex === idx && (
-                  <Popup
-                    position={[p.lat, p.lng]}
-                    eventHandlers={{
-                      remove: () => setSelectedPointIndex(null),
-                    }}
-                  >
-                    <div
-                      className="text-right sidebar-font"
-                      style={{
-                        minWidth: 200,
-                        direction: "rtl",
-                        fontSize: "16px",
-                      }}
-                    >
-                      <div className="font-bold border-b pb-2 mb-2 text-blue-700">
-                        نقطه {idx + 1}
-                      </div>
+                <div className="text-sm text-slate-400 mt-2 pt-1 border-t">
+                  Lat: {p.lat.toFixed(6)}
+                  <br />
+                  Lng: {p.lng.toFixed(6)}
+                </div>
+              </div>
+            </div>
+          </Popup>
+        )}
+      </Marker>
+    ))}
+  </MapContainer>
+</div>
 
-                      <div className="text-base space-y-1">
-                        <div>
-                          <b>X:</b> {p.utmX}
-                        </div>
-
-                        <div>
-                          <b>Y:</b> {p.utmY}
-                        </div>
-
-                        <div className="text-sm text-slate-400 mt-2 pt-1 border-t">
-                          Lat: {p.lat.toFixed(6)}
-                          <br />
-                          Lng: {p.lng.toFixed(6)}
-                        </div>
-                      </div>
-                    </div>
-                  </Popup>
-                )}
-              </Marker>
-            ))}
-          </MapContainer>
-        </div>
       </div>
     </>
   );
