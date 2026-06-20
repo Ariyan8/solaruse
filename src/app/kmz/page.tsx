@@ -4,7 +4,7 @@ import dynamic from 'next/dynamic';
 
 // این بخش جایگزین import معمولی می‌شود
 const KMZCreator = dynamic(
-  () => import('@/components/gis/KMZCreator2'), 
+  () => import('@/components/gis/KMZcreator'), 
   { ssr: false } 
 );
 
