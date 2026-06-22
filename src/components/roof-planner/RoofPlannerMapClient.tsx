@@ -246,8 +246,9 @@ function DrawingTools({
 
     map.addControl(drawControl);
 
-    const handleCreated = (event: L.DrawEvents.Created) => {
-      const layer = event.layer as L.Polygon;
+    const handleCreated: L.LeafletEventHandlerFn = (event) => {
+      const createdEvent = event as L.DrawEvents.Created;
+      const layer = createdEvent.layer as L.Polygon;
 
       drawnItems.clearLayers();
       roofLayer.clearLayers();
@@ -292,7 +293,7 @@ function DrawingTools({
       onStatsChange(stats);
     };
 
-    const handleDeleted = () => {
+    const handleDeleted: L.LeafletEventHandlerFn = () => {
       drawnItems.clearLayers();
       roofLayer.clearLayers();
       panelsLayer.clearLayers();
