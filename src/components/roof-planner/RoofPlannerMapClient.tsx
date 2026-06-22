@@ -25,15 +25,9 @@ const MAP_CENTER: LatLngExpression = [35.7219, 51.3347];
 const DEG_TO_RAD = Math.PI / 180;
 const EARTH_METERS_PER_DEG_LAT = 111320;
 
-// ابعاد تقریبی پنل استاندارد خورشیدی بر حسب متر
 const PANEL_WIDTH = 1.13;
 const PANEL_HEIGHT = 2.28;
-
-// فاصله بین پنل‌ها بر حسب متر
 const PANEL_GAP = 0.15;
-
-// زاویه چیدمان پنل‌ها بر حسب درجه
-// اگر خواستید پنل‌ها بچرخند، این عدد را تغییر دهید
 const PANEL_ANGLE_DEG = 0;
 
 function FixMap() {
@@ -145,14 +139,10 @@ function generateSolarPanelsInsidePolygon(options: {
     createLatLngToLocalConverter(center);
 
   const polygonLocal = polygonLatLngs.map((latLng) => latLngToLocal(latLng));
-
   const roofArea = polygonAreaMeters(polygonLocal);
-
   const angleRad = angleDeg * DEG_TO_RAD;
 
-  // پلیگون را برعکس زاویه پنل می‌چرخانیم تا تولید شبکه ساده شود
   const rotatedPolygon = polygonLocal.map((p) => rotatePoint(p, -angleRad));
-
   const bounds = getPolygonBounds(rotatedPolygon);
 
   const stepX = panelWidth + gap;
@@ -179,7 +169,6 @@ function generateSolarPanelsInsidePolygon(options: {
         y: y + panelHeight / 2,
       };
 
-      // برای اینکه پنل از محدوده بام بیرون نزند، چهار گوشه و مرکز را چک می‌کنیم
       const testPoints = [...panelRectRotated, panelCenter];
 
       const isInside = testPoints.every((point) =>
@@ -190,7 +179,6 @@ function generateSolarPanelsInsidePolygon(options: {
         continue;
       }
 
-      // برگرداندن پنل‌ها به زاویه اصلی
       const panelRectOriginal = panelRectRotated.map((point) =>
         rotatePoint(point, angleRad)
       );
@@ -258,7 +246,7 @@ function DrawingTools({
 
     map.addControl(drawControl);
 
-    const handleCreated = (event: any) => {
+    const handleCreated = (event: L.DrawEvents.Created) => {
       const layer = event.layer as L.Polygon;
 
       drawnItems.clearLayers();
