@@ -3,7 +3,7 @@ export type Product = {
   name: string;
   shortDescription: string;
   description: string;
-  price?: number;
+  price: number;
   image: string;
   category: "package" | "equipment" | "service";
   isFeatured?: boolean;
