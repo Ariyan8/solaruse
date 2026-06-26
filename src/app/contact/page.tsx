@@ -32,7 +32,7 @@ export default function ContactPage() {
                 <FaPhone className="text-orange-500 w-6 h-6" />
                 <div>
                   <strong>تلفن:</strong>
-                  <p className="font-medium">0912-000-0000</p>
+                  <p className="font-medium">0912-802-3901</p>
                 </div>
               </div>
 
@@ -40,7 +40,7 @@ export default function ContactPage() {
                 <FaEnvelope className="text-orange-500 w-6 h-6" />
                 <div>
                   <strong>ایمیل:</strong>
-                  <p className="font-medium">info@solaruse.ir</p>
+                  <p className="font-medium">sadraei.ariyan@yahoo.com</p>
                 </div>
               </div>
 
@@ -49,7 +49,7 @@ export default function ContactPage() {
                 <div>
                   <strong>آدرس:</strong>
                   <p className="font-medium leading-7">
-                    تهران، برج خورشید، طبقه ۱۰، واحد ۱۲۳، بلوار انرژی
+                    تهران، اندیشه فازیک، پاساژ گلدیس
                   </p>
                 </div>
               </div>
