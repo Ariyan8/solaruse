@@ -41,7 +41,9 @@ export default async function ProductPage({ params }: Props) {
 
           <div className="mt-8 flex items-center justify-between border-t pt-6">
             <span className="text-2xl font-black text-emerald-600">
-              {product.price.toLocaleString("fa-IR")} تومان
+              {typeof product.price === "number"
+                ? `${product.price.toLocaleString("fa-IR")} تومان`
+                : "قیمت ناموجود"}
             </span>
 
             <button className="rounded-xl bg-gray-900 px-8 py-3 font-bold text-white transition hover:bg-emerald-600">
